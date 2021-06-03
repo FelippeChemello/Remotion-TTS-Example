@@ -46,6 +46,10 @@ Welcome to your TTS Remotion project!
 -   Copy `.env.example` to `.env` entering your secrets
 -   Use method `textToSpeech` from `src/TextToSpeech/tts.ts` to convert Text to Audio, this method will return file url, you can use it as source of `<Audio />` component
 
+## Example
+
+[![Remotion TTS example](http://img.youtube.com/vi/gbIno38xdhQ/0.jpg)](http://www.youtube.com/watch?v=gbIno38xdhQ 'Remotion TTS example')
+
 ## Commands
 
 **Start Preview**
