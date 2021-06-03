@@ -1,0 +1,38 @@
+{
+	"name": "remotion-template",
+	"version": "1.0.0",
+	"description": "My Remotion video",
+	"scripts": {
+		"start": "remotion preview src/index.tsx",
+		"build": "remotion render src/index.tsx HelloWorld out.mp4",
+		"upgrade": "remotion upgrade",
+		"server": "ts-node server.tsx",
+		"test": "eslint src --ext ts,tsx,js,jsx && tsc"
+	},
+	"repository": {},
+	"license": "UNLICENSED",
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.17.0",
+		"@remotion/bundler": "^2.0.0",
+		"@remotion/cli": "^2.0.0",
+		"@remotion/eslint-config": "^2.0.0",
+		"@remotion/lambda": "^2.2.0-alpha.9d9cdf5c",
+		"@remotion/renderer": "^2.0.0",
+		"@types/express": "^4.17.9",
+		"@types/react": "^17.0.0",
+		"eslint": "^7.15.0",
+		"express": "^4.17.1",
+		"md5": "^2.3.0",
+		"microsoft-cognitiveservices-speech-sdk": "^1.17.0",
+		"prettier": "^2.2.1",
+		"prettier-plugin-organize-imports": "^1.1.1",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"remotion": "^2.0.0",
+		"ts-node": "^10.0.0",
+		"typescript": "^4.2.3"
+	},
+	"devDependencies": {
+		"@types/md5": "^2.3.0"
+	}
+}
