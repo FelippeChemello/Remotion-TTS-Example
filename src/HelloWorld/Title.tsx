@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {
 	Audio,
 	continueRender,
@@ -20,17 +20,17 @@ export const Title: React.FC<{
 	const [handle] = useState(() => delayRender());
 	const [audioUrl, setAudioUrl] = useState('');
 
-	const fetchTts = async () => {
+	const fetchTts = useCallback(async () => {
 		const fileName = await textToSpeech(titleText, 'enUSWoman1');
 
 		setAudioUrl(fileName);
 
 		continueRender(handle);
-	};
+	}, [handle, titleText]);
 
 	useEffect(() => {
 		fetchTts();
-	}, []);
+	}, [fetchTts]);
 
 	return (
 		<>
