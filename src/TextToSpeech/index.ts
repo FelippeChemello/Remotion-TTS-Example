@@ -68,9 +68,9 @@ export const textToSpeech = async (
 		const synthesizer = new SpeechSynthesizer(speechConfig);
 
 		const ssml = `
-                <speak version="1.0" xml:lang="pt-BR">
+                <speak version="1.0" xml:lang="en-US">
                     <voice name="${voices[voice]}">
-                        <break time="250ms" /> ${text}
+                        <break time="100ms" /> ${text}
                     </voice>
                 </speak>`;
 
