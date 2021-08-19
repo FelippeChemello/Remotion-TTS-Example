@@ -2,6 +2,7 @@ import {GetObjectCommand, PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
 import md5 from 'md5';
 import {
 	SpeechConfig,
+	SpeechSynthesisResult,
 	SpeechSynthesizer,
 } from 'microsoft-cognitiveservices-speech-sdk';
 
@@ -33,33 +34,36 @@ export const textToSpeech = async (
 		return createS3Url(fileName);
 	}
 
-	return new Promise((resolve) => {
-		const synthesizer = new SpeechSynthesizer(speechConfig);
+	const synthesizer = new SpeechSynthesizer(speechConfig);
 
-		const ssml = `
+	const ssml = `
                 <speak version="1.0" xml:lang="en-US">
                     <voice name="${voices[voice]}">
                         <break time="100ms" /> ${text}
                     </voice>
                 </speak>`;
 
-		synthesizer.speakSsmlAsync(
-			ssml,
-			(result) => {
-				const {audioData} = result;
+	const result = await new Promise<SpeechSynthesisResult>(
+		(resolve, reject) => {
+			synthesizer.speakSsmlAsync(
+				ssml,
+				(res) => {
+					resolve(res);
+				},
+				(error) => {
+					reject(error);
+					synthesizer.close();
+				}
+			);
+		}
+	);
+	const {audioData} = result;
 
-				synthesizer.close();
+	synthesizer.close();
 
-				uploadTtsToS3(audioData, fileName);
+	await uploadTtsToS3(audioData, fileName);
 
-				resolve(createS3Url(fileName));
-			},
-			(error) => {
-				console.log(error);
-				synthesizer.close();
-			}
-		);
-	});
+	return createS3Url(fileName);
 };
 
 const checkIfAudioHasAlreadyBeenSynthesized = async (fileName: string) => {
