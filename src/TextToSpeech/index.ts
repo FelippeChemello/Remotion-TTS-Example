@@ -11,11 +11,11 @@ const voices = {
 	ptBRMan: 'pt-BR-AntonioNeural',
 	enUSWoman1: 'en-US-JennyNeural',
 	enUSWoman2: 'en-US-AriaNeural',
-} as {[key: string]: string};
+} as const;
 
 export const textToSpeech = async (
 	text: string,
-	voice: string
+	voice: keyof typeof voices
 ): Promise<string> => {
 	const speechConfig = SpeechConfig.fromSubscription(
 		process.env.AZURE_TTS_KEY || '',
@@ -97,7 +97,7 @@ const uploadTtsToS3 = async (audioData: ArrayBuffer, fileName: string) => {
 		},
 	});
 
-	return await s3.send(
+	return s3.send(
 		new PutObjectCommand({
 			Bucket: bucketName,
 			Key: fileName,
