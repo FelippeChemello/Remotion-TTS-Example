@@ -25,7 +25,6 @@
 		"md5": "^2.3.0",
 		"microsoft-cognitiveservices-speech-sdk": "^1.17.0",
 		"prettier": "^2.2.1",
-		"prettier-plugin-organize-imports": "^1.1.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"remotion": "^2.0.0",
