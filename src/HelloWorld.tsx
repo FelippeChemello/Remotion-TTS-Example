@@ -22,10 +22,7 @@ export const HelloWorld: React.FC<{
 	return (
 		<div style={{flex: 1, backgroundColor: 'white'}}>
 			<div style={{opacity}}>
-				<Sequence
-					from={transitionStart + 10}
-					durationInFrames={Infinity}
-				>
+				<Sequence from={transitionStart + 10}>
 					<Title titleText={titleText} titleColor={titleColor} />
 				</Sequence>
 			</div>
