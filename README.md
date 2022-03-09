@@ -52,6 +52,12 @@ Welcome to your TTS Remotion project!
 
 ## Commands
 
+**Install Dependencies**
+
+```console
+npm install
+```
+
 **Start Preview**
 
 ```console
