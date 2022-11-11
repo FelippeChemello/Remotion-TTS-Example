@@ -1,7 +1,7 @@
 import {Composition} from 'remotion';
 import {HelloWorld} from './HelloWorld';
 
-export const RemotionVideo: React.FC = () => {
+export const RemotionRoot: React.FC = () => {
 	if (!process.env.AZURE_TTS_KEY) {
 		throw new Error(
 			'AZURE_TTS_KEY environment variable is missing. Read the docs first and complete the setup.'
