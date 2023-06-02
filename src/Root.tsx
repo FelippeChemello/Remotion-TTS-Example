@@ -1,5 +1,7 @@
 import {Composition} from 'remotion';
 import {HelloWorld} from './HelloWorld';
+import {z} from 'zod';
+import {zColor} from '@remotion/zod-types';
 
 export const RemotionRoot: React.FC = () => {
 	if (!process.env.AZURE_TTS_KEY) {
@@ -32,6 +34,12 @@ export const RemotionRoot: React.FC = () => {
 			'AWS_SECRET_ACCESS_KEY environment variable is missing. Read the instructions in README.md file and complete the setup.'
 		);
 	}
+
+	const schema = z.object({
+		titleText: z.string(),
+		titleColor: zColor(),
+	});
+
 	return (
 		<>
 			<Composition
@@ -41,10 +49,8 @@ export const RemotionRoot: React.FC = () => {
 				fps={30}
 				width={1920}
 				height={1080}
-				defaultProps={{
-					titleText: 'Working with TTS (Azure + AWS S3)',
-					titleColor: 'black',
-				}}
+				schema={schema}
+				defaultProps={{titleText: 'hello', titleColor: 'black'}}
 			/>
 		</>
 	);

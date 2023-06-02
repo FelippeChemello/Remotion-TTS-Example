@@ -29,7 +29,6 @@ export const textToSpeech = async (
 	const fileName = `${md5(text)}.mp3`;
 
 	const fileExists = await checkIfAudioHasAlreadyBeenSynthesized(fileName);
-
 	if (fileExists) {
 		return createS3Url(fileName);
 	}
@@ -42,21 +41,22 @@ export const textToSpeech = async (
                         <break time="100ms" /> ${text}
                     </voice>
                 </speak>`;
-
-	const result = await new Promise<SpeechSynthesisResult>(
-		(resolve, reject) => {
-			synthesizer.speakSsmlAsync(
-				ssml,
-				(res) => {
-					resolve(res);
-				},
-				(error) => {
-					reject(error);
-					synthesizer.close();
+	const result = await new Promise<SpeechSynthesisResult>((resolve, reject) => {
+		synthesizer.speakSsmlAsync(
+			ssml,
+			(res) => {
+				if (!res.audioDuration) {
+					reject(res.errorDetails);
+					return;
 				}
-			);
-		}
-	);
+				resolve(res);
+			},
+			(error) => {
+				reject(error);
+				synthesizer.close();
+			}
+		);
+	});
 	const {audioData} = result;
 
 	synthesizer.close();
