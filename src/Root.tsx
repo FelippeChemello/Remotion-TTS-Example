@@ -1,5 +1,4 @@
 import {Composition} from 'remotion';
-import {compSchema} from './env';
 import {HelloWorld} from './HelloWorld';
 
 export const RemotionRoot: React.FC = () => {
@@ -16,7 +15,6 @@ export const RemotionRoot: React.FC = () => {
 					titleText: 'Working with TTS (Azure + AWS S3)',
 					titleColor: 'black',
 				}}
-				schema={compSchema}
 			/>
 		</>
 	);

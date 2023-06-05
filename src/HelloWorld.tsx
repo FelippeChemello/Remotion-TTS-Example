@@ -1,18 +1,10 @@
-import {
-	AbsoluteFill,
-	interpolate,
-	Sequence,
-	useCurrentFrame,
-	useVideoConfig,
-} from 'remotion';
-import {z} from 'zod';
-import {compSchema} from './env';
+import {interpolate, Sequence, useCurrentFrame, useVideoConfig} from 'remotion';
 import {Title} from './HelloWorld/Title';
 
-export const HelloWorld: React.FC<z.infer<typeof compSchema>> = ({
-	titleText,
-	titleColor,
-}) => {
+export const HelloWorld: React.FC<{
+	titleText: string;
+	titleColor: string;
+}> = ({titleText, titleColor}) => {
 	const frame = useCurrentFrame();
 	const videoConfig = useVideoConfig();
 
@@ -25,13 +17,15 @@ export const HelloWorld: React.FC<z.infer<typeof compSchema>> = ({
 			extrapolateRight: 'clamp',
 		}
 	);
-	const transitionStart = 20;
+	const transitionStart = 25;
 
 	return (
-		<AbsoluteFill style={{backgroundColor: 'white'}}>
-			<Sequence style={{opacity}} from={transitionStart}>
-				<Title titleText={titleText} titleColor={titleColor} />
-			</Sequence>
-		</AbsoluteFill>
+		<div style={{flex: 1, backgroundColor: 'white'}}>
+			<div style={{opacity}}>
+				<Sequence from={transitionStart + 10}>
+					<Title titleText={titleText} titleColor={titleColor} />
+				</Sequence>
+			</div>
+		</div>
 	);
 };
