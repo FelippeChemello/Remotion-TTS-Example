@@ -4,6 +4,7 @@ import {
 	SpeechConfig,
 	SpeechSynthesisResult,
 	SpeechSynthesizer,
+	ResultReason,
 } from 'microsoft-cognitiveservices-speech-sdk';
 
 const voices = {
@@ -47,11 +48,13 @@ export const textToSpeech = async (
 		synthesizer.speakSsmlAsync(
 			ssml,
 			(res) => {
-				if (res.errorDetails) {
+				if (res.reason === ResultReason.SynthesizingAudioCompleted) {
+					resolve(res);
+				} else if (res.errorDetails) {
 					reject(new Error(res.errorDetails));
-					return;
+				} else {
+					reject(new Error('Speech Synthesis Error'));
 				}
-				resolve(res);
 			},
 			(error) => {
 				reject(error);
