@@ -6,7 +6,6 @@ import {
 	SpeechSynthesizer,
 	ResultReason,
 } from 'microsoft-cognitiveservices-speech-sdk';
-import {env} from './env';
 
 const voices = {
 	ptBRWoman: 'pt-BR-FranciscaNeural',
@@ -20,8 +19,8 @@ export const textToSpeech = async (
 	voice: keyof typeof voices
 ): Promise<string> => {
 	const speechConfig = SpeechConfig.fromSubscription(
-		env.AZURE_TTS_KEY,
-		env.AZURE_TTS_REGION
+		process.env.AZURE_TTS_KEY || '',
+		process.env.AZURE_TTS_REGION || ''
 	);
 
 	if (!voices[voice]) {
@@ -73,13 +72,13 @@ export const textToSpeech = async (
 };
 
 const checkIfAudioHasAlreadyBeenSynthesized = async (fileName: string) => {
-	const bucketName = env.AWS_S3_BUCKET_NAME;
-	const awsRegion = env.AWS_S3_REGION;
+	const bucketName = process.env.AWS_S3_BUCKET_NAME;
+	const awsRegion = process.env.AWS_S3_REGION;
 	const s3 = new S3Client({
 		region: awsRegion,
 		credentials: {
-			accessKeyId: env.AWS_ACCESS_KEY_ID || '',
-			secretAccessKey: env.AWS_SECRET_ACCESS_KEY || '',
+			accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+			secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
 		},
 	});
 
@@ -93,13 +92,13 @@ const checkIfAudioHasAlreadyBeenSynthesized = async (fileName: string) => {
 };
 
 const uploadTtsToS3 = async (audioData: ArrayBuffer, fileName: string) => {
-	const bucketName = env.AWS_S3_BUCKET_NAME;
-	const awsRegion = env.AWS_S3_REGION;
+	const bucketName = process.env.AWS_S3_BUCKET_NAME;
+	const awsRegion = process.env.AWS_S3_REGION;
 	const s3 = new S3Client({
 		region: awsRegion,
 		credentials: {
-			accessKeyId: env.AWS_ACCESS_KEY_ID,
-			secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+			accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+			secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
 		},
 	});
 
@@ -113,7 +112,7 @@ const uploadTtsToS3 = async (audioData: ArrayBuffer, fileName: string) => {
 };
 
 const createS3Url = (filename: string) => {
-	const bucketName = env.AWS_S3_BUCKET_NAME;
+	const bucketName = process.env.AWS_S3_BUCKET_NAME;
 
 	return `https://${bucketName}.s3.amazonaws.com/${filename}`;
 };
