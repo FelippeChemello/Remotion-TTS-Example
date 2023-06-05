@@ -7,7 +7,7 @@ import {
 	useCurrentFrame,
 	useVideoConfig,
 } from 'remotion';
-import {textToSpeech} from '../TextToSpeech';
+import {textToSpeech} from '../tts';
 
 export const Title: React.FC<{
 	titleText: string;
