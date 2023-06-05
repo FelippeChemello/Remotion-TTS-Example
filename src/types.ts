@@ -12,7 +12,12 @@ export const env = z
 	})
 	.parse(process.env);
 
+const voices = ['ptBRWoman', 'ptBRMan', 'enUSWoman1', 'enUSWoman2'] as const;
+
+export type Voice = (typeof voices)[number];
+
 export const compSchema = z.object({
 	titleText: z.string(),
 	titleColor: zColor(),
+	voice: z.enum(voices),
 });
