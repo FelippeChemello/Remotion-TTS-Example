@@ -3,6 +3,7 @@ import {compSchema} from './types';
 import {HelloWorld} from './HelloWorld';
 import {getAudioDurationInSeconds} from '@remotion/media-utils';
 import {audioAlreadyExists, createS3Url, synthesizeSpeech} from './tts';
+import {waitForNoInput} from './debounce';
 
 export const RemotionRoot: React.FC = () => {
 	return (
@@ -19,7 +20,8 @@ export const RemotionRoot: React.FC = () => {
 					titleColor: 'black',
 					voice: 'enUSWoman1' as const,
 				}}
-				calculateMetadata={async ({props}) => {
+				calculateMetadata={async ({props, abortSignal}) => {
+					await waitForNoInput(abortSignal, 1000);
 					const exists = await audioAlreadyExists({
 						text: props.titleText,
 						voice: props.voice,
