@@ -1,7 +1,8 @@
 import {Composition} from 'remotion';
 import {compSchema} from './types';
 import {HelloWorld} from './HelloWorld';
-import {audioAlreadyExists, textToSpeech} from './tts';
+import {getAudioDurationInSeconds} from '@remotion/media-utils';
+import {audioAlreadyExists, createS3Url, synthesizeSpeech} from './tts';
 
 export const RemotionRoot: React.FC = () => {
 	return (
@@ -19,17 +20,22 @@ export const RemotionRoot: React.FC = () => {
 					voice: 'enUSWoman1' as const,
 				}}
 				calculateMetadata={async ({props}) => {
-					if (
-						!(await audioAlreadyExists({
-							text: props.titleText,
-							voice: props.voice,
-						}))
-					) {
-						console.log('synthesizing audio', props.titleText);
-						await textToSpeech(props.titleText, props.voice);
+					const exists = await audioAlreadyExists({
+						text: props.titleText,
+						voice: props.voice,
+					});
+					if (!exists) {
+						await synthesizeSpeech(props.titleText, props.voice);
 					}
 
-					return {};
+					const fileName = createS3Url({
+						titleText: props.titleText,
+						voice: props.voice,
+					});
+
+					const duration = await getAudioDurationInSeconds(fileName);
+
+					return {props, durationInFrames: Math.ceil(duration * 30)};
 				}}
 				schema={compSchema}
 			/>
