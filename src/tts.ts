@@ -47,10 +47,10 @@ export const synthesizeSpeech = async (
 
 	const ssml = `
                 <speak version="1.0" xml:lang="en-US">
-                    <voice name="${voiceMap[voice]}">
-                        <break time="100ms" /> ${text}
-                    </voice>
-                </speak>`;
+									<voice name="${voiceMap[voice]}">
+										<break time="100ms" /> ${text}
+									</voice>
+                </speak>`.trim();
 
 	const result = await new Promise<SpeechSynthesisResult>((resolve, reject) => {
 		synthesizer.speakSsmlAsync(
