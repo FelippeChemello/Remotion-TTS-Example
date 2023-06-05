@@ -1,3 +1,4 @@
+import {zColor} from '@remotion/zod-types';
 import {z} from 'zod';
 
 export const env = z
@@ -10,3 +11,8 @@ export const env = z
 		AWS_SECRET_ACCESS_KEY: z.string(),
 	})
 	.parse(process.env);
+
+export const compSchema = z.object({
+	titleText: z.string(),
+	titleColor: zColor(),
+});
