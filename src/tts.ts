@@ -1,4 +1,9 @@
-import {GetObjectCommand, PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
+import {
+	GetObjectCommand,
+	HeadObjectCommand,
+	PutObjectCommand,
+	S3Client,
+} from '@aws-sdk/client-s3';
 import md5 from 'md5';
 import {
 	SpeechConfig,
@@ -91,7 +96,7 @@ export const audioAlreadyExists = async ({
 
 	try {
 		return await s3.send(
-			new GetObjectCommand({Bucket: env.AWS_S3_BUCKET_NAME, Key: fileName})
+			new HeadObjectCommand({Bucket: env.AWS_S3_BUCKET_NAME, Key: fileName})
 		);
 	} catch {
 		return false;
