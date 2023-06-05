@@ -2,7 +2,6 @@ import {Audio} from 'remotion';
 import {
 	AbsoluteFill,
 	interpolate,
-	Sequence,
 	useCurrentFrame,
 	useVideoConfig,
 } from 'remotion';
@@ -28,14 +27,13 @@ export const HelloWorld: React.FC<z.infer<typeof compSchema>> = ({
 			extrapolateRight: 'clamp',
 		}
 	);
-	const transitionStart = 20;
 
 	return (
 		<AbsoluteFill style={{backgroundColor: 'white'}}>
-			<Sequence style={{opacity}} from={transitionStart}>
+			<AbsoluteFill style={{opacity}}>
 				<Title titleText={titleText} titleColor={titleColor} />
 				<Audio src={createS3Url({titleText, voice})} />
-			</Sequence>
+			</AbsoluteFill>
 		</AbsoluteFill>
 	);
 };

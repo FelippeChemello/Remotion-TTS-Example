@@ -1,5 +1,4 @@
 import {
-	GetObjectCommand,
 	HeadObjectCommand,
 	PutObjectCommand,
 	S3Client,
@@ -26,7 +25,7 @@ export const voiceMap: {[key in Voice]: string} = {
 	enUSWoman2: 'en-US-AriaNeural',
 } as const;
 
-export const textToSpeech = async (
+export const synthesizeSpeech = async (
 	text: string,
 	voice: Voice
 ): Promise<void> => {
