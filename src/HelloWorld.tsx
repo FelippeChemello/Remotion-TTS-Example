@@ -1,4 +1,3 @@
-import {Audio} from 'remotion';
 import {
 	AbsoluteFill,
 	interpolate,
@@ -7,14 +6,12 @@ import {
 	useVideoConfig,
 } from 'remotion';
 import {z} from 'zod';
-import {compSchema} from './types';
+import {compSchema} from './env';
 import {Title} from './HelloWorld/Title';
-import {createS3Url} from './tts';
 
 export const HelloWorld: React.FC<z.infer<typeof compSchema>> = ({
 	titleText,
 	titleColor,
-	voice,
 }) => {
 	const frame = useCurrentFrame();
 	const videoConfig = useVideoConfig();
@@ -34,7 +31,6 @@ export const HelloWorld: React.FC<z.infer<typeof compSchema>> = ({
 		<AbsoluteFill style={{backgroundColor: 'white'}}>
 			<Sequence style={{opacity}} from={transitionStart}>
 				<Title titleText={titleText} titleColor={titleColor} />
-				<Audio src={createS3Url({titleText, voice})} />
 			</Sequence>
 		</AbsoluteFill>
 	);

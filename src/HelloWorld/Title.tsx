@@ -1,4 +1,13 @@
-import {spring, useCurrentFrame, useVideoConfig} from 'remotion';
+import {useCallback, useEffect, useState} from 'react';
+import {
+	Audio,
+	continueRender,
+	delayRender,
+	spring,
+	useCurrentFrame,
+	useVideoConfig,
+} from 'remotion';
+import {textToSpeech} from '../tts';
 
 export const Title: React.FC<{
 	titleText: string;
@@ -8,8 +17,24 @@ export const Title: React.FC<{
 	const frame = useCurrentFrame();
 	const text = titleText.split(' ').map((t) => ` ${t} `);
 
+	const [handle] = useState(() => delayRender());
+	const [audioUrl, setAudioUrl] = useState('');
+
+	const fetchTts = useCallback(async () => {
+		const fileName = await textToSpeech(titleText, 'enUSWoman1');
+
+		setAudioUrl(fileName);
+
+		continueRender(handle);
+	}, [handle, titleText]);
+
+	useEffect(() => {
+		fetchTts();
+	}, [fetchTts]);
+
 	return (
 		<>
+			{audioUrl ? <Audio src={audioUrl} /> : <></>}
 			<h1
 				style={{
 					fontFamily: 'SF Pro Text, Helvetica, Arial',

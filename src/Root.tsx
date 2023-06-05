@@ -1,7 +1,6 @@
 import {Composition} from 'remotion';
-import {compSchema} from './types';
+import {compSchema} from './env';
 import {HelloWorld} from './HelloWorld';
-import {audioAlreadyExists, textToSpeech} from './tts';
 
 export const RemotionRoot: React.FC = () => {
 	return (
@@ -16,20 +15,6 @@ export const RemotionRoot: React.FC = () => {
 				defaultProps={{
 					titleText: 'Working with TTS (Azure + AWS S3)',
 					titleColor: 'black',
-					voice: 'enUSWoman1' as const,
-				}}
-				calculateMetadata={async ({props}) => {
-					if (
-						!(await audioAlreadyExists({
-							text: props.titleText,
-							voice: props.voice,
-						}))
-					) {
-						console.log('synthesizing audio', props.titleText);
-						await textToSpeech(props.titleText, props.voice);
-					}
-
-					return {};
 				}}
 				schema={compSchema}
 			/>
