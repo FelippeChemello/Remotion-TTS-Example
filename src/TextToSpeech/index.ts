@@ -43,20 +43,22 @@ export const textToSpeech = async (
                     </voice>
                 </speak>`;
 
-	const result = await new Promise<SpeechSynthesisResult>(
-		(resolve, reject) => {
-			synthesizer.speakSsmlAsync(
-				ssml,
-				(res) => {
-					resolve(res);
-				},
-				(error) => {
-					reject(error);
-					synthesizer.close();
+	const result = await new Promise<SpeechSynthesisResult>((resolve, reject) => {
+		synthesizer.speakSsmlAsync(
+			ssml,
+			(res) => {
+				if (res.errorDetails) {
+					reject(new Error(res.errorDetails));
+					return;
 				}
-			);
-		}
-	);
+				resolve(res);
+			},
+			(error) => {
+				reject(error);
+				synthesizer.close();
+			}
+		);
+	});
 	const {audioData} = result;
 
 	synthesizer.close();
