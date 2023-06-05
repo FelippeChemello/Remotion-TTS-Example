@@ -14,7 +14,8 @@ Welcome to your TTS Remotion project!
 ## Get Started
 
 - Create Azure Account
-- Create TTS service on Azure
+- Create TTS service on Azure, set `AZURE_TTS_KEY` and `AZURE_TTS_REGION`.
+  > It may take some time until the subscription is active, in the meanwhile you might get "1006" errors even if the token is valid.
 - Create AWS Account
 - Setup S3 Bucket with public access
   - Configure bucket policy
