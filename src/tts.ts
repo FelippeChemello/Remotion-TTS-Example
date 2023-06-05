@@ -5,10 +5,16 @@ import {
 	SpeechSynthesisResult,
 	SpeechSynthesizer,
 	ResultReason,
+	AudioConfig,
+	AudioOutputStream,
 } from 'microsoft-cognitiveservices-speech-sdk';
-import {env} from './env';
+import {env, Voice} from './types';
 
-const voices = {
+export const getFileName = ({text, voice}: {text: string; voice: string}) => {
+	return `${md5(`${text}--${voice}`)}.mp3`;
+};
+
+export const voiceMap: {[key in Voice]: string} = {
 	ptBRWoman: 'pt-BR-FranciscaNeural',
 	ptBRMan: 'pt-BR-AntonioNeural',
 	enUSWoman1: 'en-US-JennyNeural',
@@ -17,30 +23,27 @@ const voices = {
 
 export const textToSpeech = async (
 	text: string,
-	voice: keyof typeof voices
-): Promise<string> => {
+	voice: Voice
+): Promise<void> => {
 	const speechConfig = SpeechConfig.fromSubscription(
 		env.AZURE_TTS_KEY,
 		env.AZURE_TTS_REGION
 	);
 
-	if (!voices[voice]) {
+	if (!voiceMap[voice]) {
 		throw new Error('Voice not found');
 	}
 
-	const fileName = `${md5(text)}.mp3`;
+	const fileName = getFileName({text, voice});
 
-	const fileExists = await checkIfAudioHasAlreadyBeenSynthesized(fileName);
+	const stream = AudioOutputStream.createPullStream();
+	const audioConfig = AudioConfig.fromStreamOutput(stream);
 
-	if (fileExists) {
-		return createS3Url(fileName);
-	}
-
-	const synthesizer = new SpeechSynthesizer(speechConfig);
+	const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
 
 	const ssml = `
                 <speak version="1.0" xml:lang="en-US">
-                    <voice name="${voices[voice]}">
+                    <voice name="${voiceMap[voice]}">
                         <break time="100ms" /> ${text}
                     </voice>
                 </speak>`;
@@ -68,24 +71,27 @@ export const textToSpeech = async (
 	synthesizer.close();
 
 	await uploadTtsToS3(audioData, fileName);
-
-	return createS3Url(fileName);
 };
 
-const checkIfAudioHasAlreadyBeenSynthesized = async (fileName: string) => {
-	const bucketName = env.AWS_S3_BUCKET_NAME;
-	const awsRegion = env.AWS_S3_REGION;
+export const audioAlreadyExists = async ({
+	text,
+	voice,
+}: {
+	text: string;
+	voice: Voice;
+}) => {
+	const fileName = getFileName({text, voice});
 	const s3 = new S3Client({
-		region: awsRegion,
+		region: env.AWS_S3_REGION,
 		credentials: {
-			accessKeyId: env.AWS_ACCESS_KEY_ID || '',
-			secretAccessKey: env.AWS_SECRET_ACCESS_KEY || '',
+			accessKeyId: env.AWS_ACCESS_KEY_ID,
+			secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
 		},
 	});
 
 	try {
 		return await s3.send(
-			new GetObjectCommand({Bucket: bucketName, Key: fileName})
+			new GetObjectCommand({Bucket: env.AWS_S3_BUCKET_NAME, Key: fileName})
 		);
 	} catch {
 		return false;
@@ -112,8 +118,14 @@ const uploadTtsToS3 = async (audioData: ArrayBuffer, fileName: string) => {
 	);
 };
 
-const createS3Url = (filename: string) => {
-	const bucketName = env.AWS_S3_BUCKET_NAME;
+export const createS3Url = ({
+	titleText,
+	voice,
+}: {
+	titleText: string;
+	voice: Voice;
+}) => {
+	const filename = getFileName({text: titleText, voice});
 
-	return `https://${bucketName}.s3.amazonaws.com/${filename}`;
+	return `https://${env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${filename}`;
 };
