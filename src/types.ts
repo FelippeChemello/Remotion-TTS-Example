@@ -17,7 +17,8 @@ const voices = ['ptBRWoman', 'ptBRMan', 'enUSWoman1', 'enUSWoman2'] as const;
 export type Voice = (typeof voices)[number];
 
 export const compSchema = z.object({
-	titleText: z.string(),
+	text: z.string(),
 	titleColor: zColor(),
 	voice: z.enum(voices),
+	displaySpeed: z.number(),
 });

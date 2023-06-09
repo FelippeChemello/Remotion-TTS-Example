@@ -16,22 +16,23 @@ export const RemotionRoot: React.FC = () => {
 				width={1920}
 				height={1080}
 				defaultProps={{
-					titleText: 'Working with TTS (Azure + AWS S3)',
+					text: 'Working with TTS (Azure + AWS S3)',
 					titleColor: 'black',
 					voice: 'enUSWoman1' as const,
+					displaySpeed: 10,
 				}}
 				calculateMetadata={async ({props, abortSignal}) => {
 					await waitForNoInput(abortSignal, 1000);
 					const exists = await audioAlreadyExists({
-						text: props.titleText,
+						text: props.text,
 						voice: props.voice,
 					});
 					if (!exists) {
-						await synthesizeSpeech(props.titleText, props.voice);
+						await synthesizeSpeech(props.text, props.voice);
 					}
 
 					const fileName = createS3Url({
-						titleText: props.titleText,
+						text: props.text,
 						voice: props.voice,
 					});
 

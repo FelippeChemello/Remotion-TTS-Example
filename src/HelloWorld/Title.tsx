@@ -1,12 +1,13 @@
 import {spring, useCurrentFrame, useVideoConfig} from 'remotion';
 
 export const Title: React.FC<{
-	titleText: string;
+	text: string;
 	titleColor: string;
-}> = ({titleText, titleColor}) => {
+	displaySpeed: number;
+}> = ({text, titleColor, displaySpeed}) => {
 	const videoConfig = useVideoConfig();
 	const frame = useCurrentFrame();
-	const text = titleText.split(' ').map((t) => ` ${t} `);
+	const rawText = text.split(' ').map((t) => ` ${t} `);
 
 	return (
 		<>
@@ -21,7 +22,7 @@ export const Title: React.FC<{
 					width: '100%',
 				}}
 			>
-				{text.map((t, i) => {
+				{rawText.map((t, i) => {
 					return (
 						<span
 							key={t}
@@ -31,7 +32,7 @@ export const Title: React.FC<{
 								marginRight: 10,
 								transform: `scale(${spring({
 									fps: videoConfig.fps,
-									frame: frame - i * 5,
+									frame: frame - i * displaySpeed,
 									config: {
 										damping: 100,
 										stiffness: 200,
