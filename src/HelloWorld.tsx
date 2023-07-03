@@ -1,10 +1,20 @@
-import {interpolate, Sequence, useCurrentFrame, useVideoConfig} from 'remotion';
+import {Audio} from 'remotion';
+import {
+	AbsoluteFill,
+	interpolate,
+	useCurrentFrame,
+	useVideoConfig,
+} from 'remotion';
+import {z} from 'zod';
+import {compSchema} from './types';
 import {Title} from './HelloWorld/Title';
+import {createS3Url} from './tts';
 
-export const HelloWorld: React.FC<{
-	titleText: string;
-	titleColor: string;
-}> = ({titleText, titleColor}) => {
+export const HelloWorld: React.FC<z.infer<typeof compSchema>> = ({
+	titleText,
+	titleColor,
+	voice,
+}) => {
 	const frame = useCurrentFrame();
 	const videoConfig = useVideoConfig();
 
@@ -17,15 +27,13 @@ export const HelloWorld: React.FC<{
 			extrapolateRight: 'clamp',
 		}
 	);
-	const transitionStart = 25;
 
 	return (
-		<div style={{flex: 1, backgroundColor: 'white'}}>
-			<div style={{opacity}}>
-				<Sequence from={transitionStart + 10}>
-					<Title titleText={titleText} titleColor={titleColor} />
-				</Sequence>
-			</div>
-		</div>
+		<AbsoluteFill style={{backgroundColor: 'white'}}>
+			<AbsoluteFill style={{opacity}}>
+				<Title titleText={titleText} titleColor={titleColor} />
+				<Audio src={createS3Url({titleText, voice})} />
+			</AbsoluteFill>
+		</AbsoluteFill>
 	);
 };

@@ -1,37 +1,11 @@
 import {Composition} from 'remotion';
+import {compSchema} from './types';
 import {HelloWorld} from './HelloWorld';
+import {getAudioDurationInSeconds} from '@remotion/media-utils';
+import {audioAlreadyExists, createS3Url, synthesizeSpeech} from './tts';
+import {waitForNoInput} from './debounce';
 
 export const RemotionRoot: React.FC = () => {
-	if (!process.env.AZURE_TTS_KEY) {
-		throw new Error(
-			'AZURE_TTS_KEY environment variable is missing. Read the instructions in README.md file and complete the setup.'
-		);
-	}
-	if (!process.env.AZURE_TTS_REGION) {
-		throw new Error(
-			'AZURE_TTS_REGION environment variable is missing. Read the instructions in README.md file and complete the setup.'
-		);
-	}
-	if (!process.env.AWS_S3_BUCKET_NAME) {
-		throw new Error(
-			'AWS_S3_BUCKET_NAME environment variable is missing. Read the instructions in README.md file and complete the setup.'
-		);
-	}
-	if (!process.env.AWS_S3_REGION) {
-		throw new Error(
-			'AWS_S3_REGION environment variable is missing. Read the instructions in README.md file and complete the setup.'
-		);
-	}
-	if (!process.env.AWS_ACCESS_KEY_ID) {
-		throw new Error(
-			'AWS_ACCESS_KEY_ID environment variable is missing. Read the instructions in README.md file and complete the setup.'
-		);
-	}
-	if (!process.env.AWS_SECRET_ACCESS_KEY) {
-		throw new Error(
-			'AWS_SECRET_ACCESS_KEY environment variable is missing. Read the instructions in README.md file and complete the setup.'
-		);
-	}
 	return (
 		<>
 			<Composition
@@ -44,7 +18,28 @@ export const RemotionRoot: React.FC = () => {
 				defaultProps={{
 					titleText: 'Working with TTS (Azure + AWS S3)',
 					titleColor: 'black',
+					voice: 'enUSWoman1' as const,
 				}}
+				calculateMetadata={async ({props, abortSignal}) => {
+					await waitForNoInput(abortSignal, 1000);
+					const exists = await audioAlreadyExists({
+						text: props.titleText,
+						voice: props.voice,
+					});
+					if (!exists) {
+						await synthesizeSpeech(props.titleText, props.voice);
+					}
+
+					const fileName = createS3Url({
+						titleText: props.titleText,
+						voice: props.voice,
+					});
+
+					const duration = await getAudioDurationInSeconds(fileName);
+
+					return {props, durationInFrames: Math.ceil(duration * 30)};
+				}}
+				schema={compSchema}
 			/>
 		</>
 	);
