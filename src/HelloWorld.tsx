@@ -11,9 +11,10 @@ import {Title} from './HelloWorld/Title';
 import {createS3Url} from './tts';
 
 export const HelloWorld: React.FC<z.infer<typeof compSchema>> = ({
-	titleText,
+	text,
 	titleColor,
 	voice,
+	displaySpeed,
 }) => {
 	const frame = useCurrentFrame();
 	const videoConfig = useVideoConfig();
@@ -31,8 +32,12 @@ export const HelloWorld: React.FC<z.infer<typeof compSchema>> = ({
 	return (
 		<AbsoluteFill style={{backgroundColor: 'white'}}>
 			<AbsoluteFill style={{opacity}}>
-				<Title titleText={titleText} titleColor={titleColor} />
-				<Audio src={createS3Url({titleText, voice})} />
+				<Title
+					displaySpeed={displaySpeed}
+					text={text}
+					titleColor={titleColor}
+				/>
+				<Audio src={createS3Url({text, voice})} />
 			</AbsoluteFill>
 		</AbsoluteFill>
 	);

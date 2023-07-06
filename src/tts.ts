@@ -70,8 +70,8 @@ export const synthesizeSpeech = async (
 			}
 		);
 	});
-	const {audioData} = result;
-
+	const {audioData, properties} = result;
+	console.log(properties);
 	synthesizer.close();
 
 	await uploadTtsToS3(audioData, fileName);
@@ -122,14 +122,8 @@ const uploadTtsToS3 = async (audioData: ArrayBuffer, fileName: string) => {
 	);
 };
 
-export const createS3Url = ({
-	titleText,
-	voice,
-}: {
-	titleText: string;
-	voice: Voice;
-}) => {
-	const filename = getFileName({text: titleText, voice});
+export const createS3Url = ({text, voice}: {text: string; voice: Voice}) => {
+	const filename = getFileName({text, voice});
 
 	return `https://${env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${filename}`;
 };
