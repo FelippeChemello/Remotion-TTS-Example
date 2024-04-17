@@ -25,7 +25,7 @@ export const Title: React.FC<{
 				{rawText.map((t, i) => {
 					return (
 						<span
-							key={t}
+							key={i + t}
 							style={{
 								color: titleColor,
 								marginLeft: 10,
