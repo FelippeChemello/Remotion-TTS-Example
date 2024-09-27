@@ -26,7 +26,7 @@ export const HelloWorld: React.FC<z.infer<typeof compSchema>> = ({
     {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
-    }
+    },
   );
 
   return (

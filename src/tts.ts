@@ -33,11 +33,11 @@ export const voiceMap: { [key in Voice]: string } = {
 
 export const synthesizeSpeech = async (
   text: string,
-  voice: Voice
+  voice: Voice,
 ): Promise<void> => {
   const speechConfig = SpeechConfig.fromSubscription(
     env.AZURE_TTS_KEY,
-    env.AZURE_TTS_REGION
+    env.AZURE_TTS_REGION,
   );
 
   if (!voiceMap[voice]) {
@@ -73,7 +73,7 @@ export const synthesizeSpeech = async (
       (error) => {
         reject(error);
         synthesizer.close();
-      }
+      },
     );
   });
   const { audioData, properties } = result;
@@ -101,7 +101,7 @@ export const audioAlreadyExists = async ({
 
   try {
     return await s3.send(
-      new HeadObjectCommand({ Bucket: env.AWS_S3_BUCKET_NAME, Key: fileName })
+      new HeadObjectCommand({ Bucket: env.AWS_S3_BUCKET_NAME, Key: fileName }),
     );
   } catch {
     return false;
@@ -124,7 +124,7 @@ const uploadTtsToS3 = async (audioData: ArrayBuffer, fileName: string) => {
       Bucket: bucketName,
       Key: fileName,
       Body: new Uint8Array(audioData),
-    })
+    }),
   );
 };
 
