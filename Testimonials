@@ -1,0 +1,147 @@
+// Import Remotion dependencies
+import { Composition, continueRender, delayRender } from 'remotion';
+import { useState, useEffect } from 'react';
+import { AbsoluteFill, Series, Audio, interpolate, useCurrentFrame, useVideoConfig, spring } from 'remotion';
+
+// Constants for animations
+const FADE_DURATION = 30;
+const TITLE_DURATION = 90;
+const CONTENT_DURATION = 150;
+
+// Main Composition Component
+const TestimonialVideo = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  // Animation helpers
+  const fadeIn = (startFrame) => {
+    return interpolate(
+      frame - startFrame,
+      [0, FADE_DURATION],
+      [0, 1],
+      { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+    );
+  };
+
+  // Slide Components
+  const IntroductionSlide = () => {
+    const opacity = fadeIn(0);
+    return (
+      <AbsoluteFill
+        style={{
+          backgroundColor: '#ffffff',
+          opacity,
+          padding: '40px',
+        }}
+      >
+        <h1 style={{
+          fontSize: '48px',
+          textAlign: 'center',
+          color: '#1a365d',
+          marginBottom: '20px'
+        }}>
+          Student Video Testimonial Guide
+        </h1>
+        <div style={{
+          fontSize: '24px',
+          textAlign: 'center',
+          color: '#4a5568'
+        }}>
+          How to Record a Great Testimonial
+        </div>
+      </AbsoluteFill>
+    );
+  };
+
+  const GuideSlide = ({ title, content, startFrame }) => {
+    const opacity = fadeIn(startFrame);
+    return (
+      <AbsoluteFill
+        style={{
+          backgroundColor: '#ffffff',
+          opacity,
+          padding: '40px',
+        }}
+      >
+        <h2 style={{
+          fontSize: '36px',
+          color: '#2c5282',
+          marginBottom: '30px'
+        }}>
+          {title}
+        </h2>
+        <div style={{
+          fontSize: '24px',
+          color: '#4a5568',
+          lineHeight: '1.6'
+        }}>
+          {content}
+        </div>
+      </AbsoluteFill>
+    );
+  };
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: 'white' }}>
+      <Series>
+        <Series.Sequence durationInFrames={TITLE_DURATION}>
+          <IntroductionSlide />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={CONTENT_DURATION}>
+          <GuideSlide
+            title="1. Introduction (10-15 seconds)"
+            content="Start with: Hi, I'm [Your Name] from [Country], and I study [Your Major] at [University Name]."
+            startFrame={TITLE_DURATION}
+          />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={CONTENT_DURATION}>
+          <GuideSlide
+            title="2. Your Experience & Benefits"
+            content="• Share your challenges before joining
+                    • Explain how Educatly helped
+                    • Highlight gained skills and opportunities"
+            startFrame={TITLE_DURATION + CONTENT_DURATION}
+          />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={CONTENT_DURATION}>
+          <GuideSlide
+            title="3. Personal Story"
+            content="• Share specific experiences
+                    • Mention professors and courses
+                    • Describe impactful events
+                    • Talk about student life"
+            startFrame={TITLE_DURATION + CONTENT_DURATION * 2}
+          />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={CONTENT_DURATION}>
+          <GuideSlide
+            title="4. Technical Tips"
+            content="• Use natural lighting
+                    • Record in landscape mode
+                    • Find a quiet environment
+                    • Keep it between 1-3 minutes"
+            startFrame={TITLE_DURATION + CONTENT_DURATION * 3}
+          />
+        </Series.Sequence>
+      </Series>
+    </AbsoluteFill>
+  );
+};
+
+// Root component with composition settings
+export const RemotionVideo = () => {
+  return (
+    <Composition
+      id="TestimonialGuide"
+      component={TestimonialVideo}
+      durationInFrames={TITLE_DURATION + CONTENT_DURATION * 4}
+      fps={30}
+      width={1920}
+      height={1080}
+    />
+  );
+};
